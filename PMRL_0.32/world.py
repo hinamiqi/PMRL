@@ -18,8 +18,8 @@ class World(object):
                         Bush():0.05,
                       }
         self.objects = {
-                          Stone():0.005,
-                          Mushroom():0.001
+                          Stone():0.002,
+                          Mushroom():0.003
                         }
 
 

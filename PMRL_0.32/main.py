@@ -5,6 +5,7 @@ import curses
 
 from scenes import *
 
+VERSION = '0.32'
 
 WSIZE = 200
 MXSIZE = 50
@@ -38,7 +39,7 @@ class Game(object):
         #self.menu = Menu()
         #self.help_p = Help()
         #self.play = play.Play(WSIZE, MXSIZE, MYSIZE, MAP_MARG, Menu())
-        self.scene = Menu(WSIZE, MXSIZE, MYSIZE)
+        self.scene = Menu(VERSION, WSIZE, MXSIZE, MYSIZE)
         self.run = True
 
     def init_colors(self):

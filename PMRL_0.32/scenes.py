@@ -5,11 +5,11 @@ from collections import Counter
 #    def __init__
 
 class Menu():
-    def __init__(self, WSIZE, MXSIZE, MYSIZE):
+    def __init__(self, VERSION, WSIZE, MXSIZE, MYSIZE):
         self.par = (WSIZE, MXSIZE, MYSIZE)
         self.title = "POTION MASTER RL"
-        self.subtitle = "v0.0.31"
-        self.info = "PMRL is roguelike about making potions and stuff."
+        self.subtitle = "v" + VERSION
+        self.info = "Roguelike about making potions and stuff."
         self.bar = "[C]ontinue   [H]elp   [Q]uit"
         #self.game = None
 
