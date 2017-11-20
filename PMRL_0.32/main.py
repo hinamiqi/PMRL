@@ -8,8 +8,8 @@ from scenes import *
 VERSION = '0.32'
 
 WSIZE = 200
-MXSIZE = 50
-MYSIZE = 30
+MXSIZE = 30
+MYSIZE = 20
 MAP_MARG = 1 # 0 - 10
 
 '''

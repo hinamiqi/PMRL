@@ -12,7 +12,12 @@ class Obj(metaclass=abc.ABCMeta):
     def color(self):
         #return 2
         return ('w','b')
-
+    
+    def descr(self):
+        return "void"
+    
+    def fdescr(self):
+        return "Nothing to describe"
 
 
 
@@ -22,7 +27,10 @@ class Stick(Obj):
         return "/"
 
     def descr(self):
-        return "Stick"
+        return "stick"
+    
+    def fdescr(self):
+        return "Long piece of wood"
 
 class Cauldron(Obj):
     pickable = False
@@ -31,7 +39,10 @@ class Cauldron(Obj):
         return "U"
 
     def descr(self):
-        return "Cauldron"
+        return "cauldron"
+    
+    def fdescr(self):
+        return "Device for making potions"
 
 
 class Bush(Obj):
@@ -42,14 +53,16 @@ class Bush(Obj):
         #return 2
         return ('g','b')
     def descr(self):
-        return 'Bush'
+        return 'bush'
+    def fdescr(self):
+        return "Ordinary forest plant"
 
 class Ground(Obj):
     pickable = False
     def __init__(self,dftclr=None):
         self.dftclr = dftclr
     def __str__(self):
-        return "."
+        return " "
     def color(self):
         #return ('GREEN','BLACK')
         if not self.dftclr:
@@ -58,7 +71,8 @@ class Ground(Obj):
             return self.dftclr
 
     def descr(self):
-        return 'Ground'
+        return 'ground'
+    
 
 class Tree(Obj):
     pickable = False
@@ -67,15 +81,19 @@ class Tree(Obj):
     def color(self):
         return 'g','b'
     def descr(self):
-        return 'Tree'
+        return 'tree'
+    def fdescr(self):
+        return "Ordinary forest plant"
 
 class Stone(Obj):
     def __str__(self):
-        return "o"
+        return "."
     def color(self):
         return 'w','b'
     def descr(self):
-        return 'Stone'
+        return 'stone'
+    def fdescr(self):
+        return "Small piece of stone"
 
 class Rock(Obj):
     pickable = False
@@ -85,7 +103,9 @@ class Rock(Obj):
     def color(self):
         return 'b','w'
     def descr(self):
-        return "Rock"
+        return "rock"
+    def fdescr(self):
+        return "Solid, unpenetrable rock"
 
 class Mushroom(Obj):
     def __str__(self):
@@ -93,7 +113,9 @@ class Mushroom(Obj):
     def color(self):
         return 'm','b'
     def descr(self):
-        return 'Mushroom'
+        return 'mushroom'
+    def fdescr(self):
+        return "Tiny unknown fungus"
 
 
 class Player():

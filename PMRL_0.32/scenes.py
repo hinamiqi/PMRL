@@ -1,5 +1,6 @@
 from world import *
 from collections import Counter
+from curses import A_BOLD
 
 #class Scene():
 #    def __init__
@@ -19,9 +20,9 @@ class Menu():
         self.startx_subtitle = int((width // 2) - (len(self.subtitle) // 2) - len(self.subtitle) % 2)
         self.startx_info = int((width // 2) - (len(self.info) // 2) - len(self.title) % 2)
         self.startx_bar = int((width // 2) - (len(self.bar) // 2) - len(self.title) % 2)
-        #stdscr.attron(curses.A_BOLD)
+        stdscr.attron(A_BOLD)
         stdscr.addstr(height//2-2, self.startx_title, self.title, clrs['r','w'])
-        #stdscr.attroff(curses.A_BOLD)
+        stdscr.attroff(A_BOLD)
         stdscr.addstr(height//2-1, self.startx_subtitle, self.subtitle)
         stdscr.addstr(height//2, self.startx_info, self.info)
         stdscr.addstr(height-1, self.startx_bar, self.bar)
@@ -46,9 +47,9 @@ class Help():
 
 
     def draw(self,stdscr, clrs):
-        #stdscr.attron(curses.A_BOLD)
+        stdscr.attron(A_BOLD)
         stdscr.addstr(MAP_MARG, MAP_MARG, self.title, clrs['b','w'])
-        #stdscr.attroff(curses.A_BOLD)
+        stdscr.attroff(A_BOLD)
         i = MAP_MARG + 1
         for line in self.data:
             stdscr.addstr(i, 2, line)
@@ -65,30 +66,90 @@ class Inventory():
         self.title = "Inventory:"
         self.prev_scene = prev_secene
         self.items = items
+        self.pos = 0
 
+    #def draw(self,stdscr, clrs):
+        #stdscr.attron(A_BOLD)
+        #stdscr.addstr(MAP_MARG, MAP_MARG, self.title)
+        #stdscr.attroff(A_BOLD)
+        #i = MAP_MARG + 1
+        #item_list = []
+        #for item in self.items:
+            #item_list.append(item.descr())
+        #cntd = Counter(item_list)
+        #n = 0
+        #for item in cntd:
+            #if n == self.pos:
+                #color =  clrs['b','w']
+            #else:
+                #color =  clrs['w','b']
+            #string = item+" "+"x"+str(cntd[item])
+            #stdscr.addstr(i, 2, string, color)
+            #i+=1
+            #n+=1
+            #if n >= 10: break
+        #stdscr.addstr(12, 2, self.items[self.pos].fdescr())
     def draw(self,stdscr, clrs):
-        #stdscr.attron(curses.A_BOLD)
-        stdscr.addstr(MAP_MARG, MAP_MARG, self.title, clrs['b','w'])
-        #stdscr.attroff(curses.A_BOLD)
+        stdscr.attron(A_BOLD)
+        stdscr.addstr(MAP_MARG, MAP_MARG, self.title)
+        stdscr.attroff(A_BOLD)
         i = MAP_MARG + 1
         item_list = []
-        for item in self.items:
-            item_list.append(item.descr())
-        cntd = Counter(item_list)
-        print(cntd)
+        #for item in self.items:
+        #    item_list.append(item.descr())
+        cntd = Counter(self.items)
         for item in cntd:
-            string = item+" "+"x"+str(cntd[item])
-            stdscr.addstr(i, 2, string)
+            item_list.append((item,cntd[item]))
+        n = 0
+        for item in item_list:
+            if n == self.pos:
+                color =  clrs['b','w']
+            else:
+                color =  clrs['w','b']
+            string = item[0].descr()+" "+"x"+str(item[1])
+            stdscr.addstr(i, 2, string, color)
             i+=1
+            n+=1
+            
+            if i >= 10 + MAP_MARG + 1: break
+        stdscr.addstr(12, 2, item_list[self.pos][0].fdescr())
         #for item in self.items:
         #    stdscr.addstr(i, 2, item.descr())
         #    i+=1
 
     def inp_handler(self, key):
+        if key == 258:
+            self.pos +=1
+            if self.pos >= len(self.items):
+                self.pos = 0
+        elif key == 259:
+            self.pos -=1
+            if self.pos < 0:
+                self.pos = len(self.items)-1
         return None
 
     def quiting(self):
         return self.prev_scene
+
+class PotionMaker(Inventory):
+    def __init__(self, prev_secene, items, MXSIZE, MYSIZE):
+        self.mx, self.my = MXSIZE, MYSIZE
+        self.title = "Making potion..."
+        self.prev_scene = prev_secene
+        self.items = items
+    
+    def draw(self,stdscr, clrs):
+        stdscr.attron(A_BOLD)
+        stdscr.addstr(MAP_MARG, MAP_MARG, self.title)
+        stdscr.attroff(A_BOLD)
+        s = MAP_MARG+1
+        stdscr.addstr(s+1, MAP_MARG, "[A]dd ingridient, set the [F]ire, [S]tir the pot or [W]ait?")
+        N = 1
+        stdscr.addstr(s+3, MAP_MARG, "Turn: "+str(N))
+        stdscr.addstr(s+5, MAP_MARG, "Currently in cauldron:  "+"Water")
+        stdscr.addstr(s+7, MAP_MARG, "Current flame:  "+"None")
+        
+        stdscr.addstr(self.my, MAP_MARG, "Pot looks "+"just like water.")
 
 class Play():
     def __init__(self, WSIZE, MXSIZE, MYSIZE, MAP_MARG, MENU):
@@ -101,17 +162,30 @@ class Play():
         obj = Cauldron()
         self.player.bp = [obj]
         self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
-        self.logtext = ""
+        self.log = ['','','']
+        self.paneltext = ""
 
     def draw(self, stdscr, clrs):
-        self.create_map()
+        self.update_map()
         self.world.map.print(stdscr, clrs)
-        stdscr.addstr(0, self.my, self.logtext)
+        stdscr.attron(A_BOLD)
+        stdscr.addstr(self.my+1, self.mx+1, self.paneltext)
+        stdscr.attroff(A_BOLD)
+        self.log_draw(stdscr)
 
-    def create_map(self):
+    def update_map(self):
         self.world.map.prng = ((self.x_w_cord-self.mx//2,self.x_w_cord+self.mx//2),\
                          (self.y_w_cord-self.my//2,self.y_w_cord+self.my//2))
-
+        
+        self.paneltext = "Here "+self.obj_here().descr()
+        
+    
+    def obj_here(self, x=None,y=None):
+        if x == None and y == None:
+            x,y = self.x_w_cord,self.y_w_cord
+        obj = self.world.map[x, y][-2]
+        return obj
+    
     def inp_handler(self, key):
         self.logtext = ""
         if key == 258:
@@ -127,7 +201,11 @@ class Play():
 
         if key == ord('i'):
             return Inventory(self, self.player.bp)
+        elif key == ord('m'):
+            return PotionMaker(self, self.player.bp, self.mx, self.my)
         return None
+        
+        
 
     def move(self,vector):
         nx = self.x_w_cord + vector[0]
@@ -137,21 +215,31 @@ class Play():
             self.world.map.remove(self.player,self.x_w_cord,self.y_w_cord)
             self.x_w_cord += vector[0]
             self.y_w_cord += vector[1]
-            self.create_map()
             self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
+            self.update_map()
+            
+            
 
     def get_obj(self):
         x, y = self.x_w_cord, self.y_w_cord
-        obj = self.world.map[x, y][-2]
+        obj = self.obj_here()
         if obj.pickable:
             self.world.map.remove(obj, x, y)
             self.player.bp.append(obj)
             #self.logwrite("Got "+obj.descr())
-            self.logtext = "Got "+obj.descr()
+            #self.logtext = "Got "+obj.descr()
+            self.logwrite("Got "+obj.descr())
+            
 
     def logwrite(self, text):
-        self.logtext = text
-
+        self.log.append(text)
+    
+    def log_draw(self, stdscr):
+        stdscr.addstr(self.my+2, 1, self.log[-3])
+        stdscr.addstr(self.my+3, 1, self.log[-2])
+        stdscr.addstr(self.my+4, 1, self.log[-1])
+        
+    
 
 
     def quiting(self):
