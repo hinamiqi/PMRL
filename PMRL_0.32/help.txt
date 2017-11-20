@@ -1,8 +1,0 @@
-PMRL is in early developement know, 
-report any bugs to hinamiqi@gmail.com
-Commands:
-ARROWS    Move in direction
-i         Open inventory
-g         Take item
-m         Make a potion
-q/ESC     Exit most of screens
