@@ -62,7 +62,7 @@ class Ground(Obj):
     def __init__(self,dftclr=None):
         self.dftclr = dftclr
     def __str__(self):
-        return " "
+        return "."
     def color(self):
         #return ('GREEN','BLACK')
         if not self.dftclr:
@@ -87,7 +87,7 @@ class Tree(Obj):
 
 class Stone(Obj):
     def __str__(self):
-        return "."
+        return ","
     def color(self):
         return 'w','b'
     def descr(self):
@@ -109,7 +109,7 @@ class Rock(Obj):
 
 class Mushroom(Obj):
     def __str__(self):
-        return ","
+        return ";"
     def color(self):
         return 'm','b'
     def descr(self):

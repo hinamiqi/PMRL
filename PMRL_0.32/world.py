@@ -34,8 +34,7 @@ class World(object):
                     rndclr = (random.choice((\
                                                'g',\
                                                'y',\
-                                               'w',\
-                                               'r')),'b')
+                                               'b')),'b')
                     obj = Ground(rndclr)
                 self.map.place(obj,i,j)
         st = Stick()

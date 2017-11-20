@@ -136,7 +136,7 @@ class Inventory():
     def quiting(self):
         return self.prev_scene
 
-class PotionMaker(Inventory):
+class PotionMaker():
     def __init__(self, prev_secene, items, MXSIZE, MYSIZE):
         self.mx, self.my = MXSIZE, MYSIZE
         self.title = "Making potion..."
@@ -155,6 +155,12 @@ class PotionMaker(Inventory):
         stdscr.addstr(s+7, MAP_MARG, "Current flame:  "+"None")
         
         stdscr.addstr(self.my, MAP_MARG, "Pot looks "+"just like water.")
+    
+    def inp_handler(self, key):
+        return None
+
+    def quiting(self):
+        return self.prev_scene
 
 class Play():
     def __init__(self, WSIZE, MXSIZE, MYSIZE, MAP_MARG, MENU):
