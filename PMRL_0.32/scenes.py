@@ -67,6 +67,7 @@ class Inventory():
         self.prev_scene = prev_secene
         self.items = items
         self.pos = 0
+        self.calc_items()
 
     #def draw(self,stdscr, clrs):
         #stdscr.attron(A_BOLD)
@@ -89,19 +90,23 @@ class Inventory():
             #n+=1
             #if n >= 10: break
         #stdscr.addstr(12, 2, self.items[self.pos].fdescr())
+    def calc_items(self):
+        self.item_list = []
+        cntd = Counter(self.items)
+        for item in cntd:
+            self.item_list.append((item,cntd[item]))
+    
     def draw(self,stdscr, clrs):
         stdscr.attron(A_BOLD)
         stdscr.addstr(MAP_MARG, MAP_MARG, self.title)
         stdscr.attroff(A_BOLD)
         i = MAP_MARG + 1
-        item_list = []
+        #item_list = []
         #for item in self.items:
         #    item_list.append(item.descr())
-        cntd = Counter(self.items)
-        for item in cntd:
-            item_list.append((item,cntd[item]))
+        
         n = 0
-        for item in item_list:
+        for item in self.item_list:
             if n == self.pos:
                 color =  clrs['b','w']
             else:
@@ -112,7 +117,7 @@ class Inventory():
             n+=1
             
             if i >= 10 + MAP_MARG + 1: break
-        stdscr.addstr(12, 2, item_list[self.pos][0].fdescr())
+        stdscr.addstr(12, 2, self.item_list[self.pos][0].fdescr())
         #for item in self.items:
         #    stdscr.addstr(i, 2, item.descr())
         #    i+=1
@@ -120,12 +125,12 @@ class Inventory():
     def inp_handler(self, key):
         if key == 258:
             self.pos +=1
-            if self.pos >= len(self.items):
+            if self.pos >= len(self.item_list):
                 self.pos = 0
         elif key == 259:
             self.pos -=1
             if self.pos < 0:
-                self.pos = len(self.items)-1
+                self.pos = len(self.item_list)-1
         return None
 
     def quiting(self):
