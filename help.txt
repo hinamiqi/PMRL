@@ -6,3 +6,4 @@ i         Open inventory
 g         Take item
 m         Make a potion
 q/ESC     Exit most of screens
+h         Show this screen

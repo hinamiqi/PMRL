@@ -1,101 +1,100 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
+
 import curses
 
-MXSIZE, MYSIZE = 20, 20
+from scenes import *
 
-class Map(dict):
-    
-    def __init__(self, x, y):
-        self.x, self.y = x, y
-        self.screen = None
-        for i in range(self.x):
-            for j in range(self.y):
-                self[i, j] = "."
-        
+VERSION = '0.33'
 
-class Console(object):
+WSIZE = 50
+MXSIZE = 30
+MYSIZE = 20
+MAP_MARG = 1 # 0 - 10
+
+'''
+Главный объект, содержащий в себе основные переменные (созданный или
+загруженный мир, координаты игрока в нем, состояние игрока и прочее),
+а также текущую сцену self.scene. Это объект, который имеет атрибуты
+содержащие в себе информацию, которая должна выводится в текущей сцене,
+и по крайней мере один метод draw(screen).
+Главный объект содержит главный метод draw_all(screen). Этот метод
+необходимо вызывать с помощью curses.wrapper(Game.draw_all), так как
+для его работы должен быть инициализирован curses.
+В этом методе содержится главный (желательно, единственный) луп, в
+котором screen (передающийся wrapper) очищается, затем вызывается
+функция .draw текущей сцены и экран обновляется. Таким образом на
+экране всегда существует то, что рисуется в методе draw() текущей сцены.
+В этом лупе так же необходимо разместить обработчик нажатий клавиш.
+Каждая сцена должна иметь свои методы обработки клавиш. В главном лупе
+всё должно просто вызываться и всё.
+'''
+class Game(object):
+    '''
+    Объекты нужно создать один раз. Потом нужно переделать систему и
+    наследовать все объекты-сцены от главного объекта Scene.
+    '''
 
     def __init__(self):
-        self.init_curses()
-
-    def init_curses(self):
-
-        self.fullwin = curses.initscr()
-        self.init_colors()
-        self.x, self.y = MXSIZE, MYSIZE
-        self.screen = curses.newwin(MXSIZE, MYSIZE)
-        self.log = curses.newwin(5, MXSIZE, 0, MYSIZE)
-        self.panel = curses.newwin(MYSIZE, 10, MXSIZE, 0)
-        self.inv = curses.newwin(0, 0)
-        self.panel.scrollok(False)
-        self.log.scrollok(True)
-        curses.noecho()
-        curses.cbreak()
-        orig = curses.curs_set(0)
-        self.screen.keypad(1)
-            #self.update()
+        #self.menu = Menu()
+        #self.help_p = Help()
+        #self.play = play.Play(WSIZE, MXSIZE, MYSIZE, MAP_MARG, Menu())
+        self.scene = Menu(VERSION, WSIZE, MXSIZE, MYSIZE)
+        self.run = True
 
     def init_colors(self):
-        curses.start_color()
-        color_names =     ['r',
-                           'g',
-                           'y',
-                           'b',
-                           'm',
-                           'c',
-                           'w',
-                           'b']
-        color_list =      [curses.COLOR_RED,
-                           curses.COLOR_GREEN,
-                           curses.COLOR_YELLOW,
-                           curses.COLOR_BLUE,
-                           curses.COLOR_MAGENTA,
-                           curses.COLOR_CYAN,
-                           curses.COLOR_WHITE,
-                           curses.COLOR_BLACK]
-        self.cp = {}
-        N = 1
-        for n in range(len(color_list)):
-            for m in range(len(color_list)):
-                curses.init_pair(N, color_list[n], color_list[m])
-                self.cp[(color_names[n],color_names[m])]=N
-                N+=1
-                
-    def deinit_curses(self):
-        curses.nocbreak()
-        try:
-            pad.keypad(0)
-        except NameError:
-            pass
-        curses.echo()
-        try:
-            curses.curs_set(orig)
-        except:
-            pass
-        curses.endwin()
-    
-    
-    def update(self, map):
-        self.screen_print(map)
-        self.screen.refresh()
-        self.log.refresh()
-        self.panel.refresh()
+            curses.start_color()
+            color_names =     ['r',
+                               'g',
+                               'y',
+                               'b',
+                               'm',
+                               'c',
+                               'w',
+                               'b']
+            color_list =      [curses.COLOR_RED,
+                               curses.COLOR_GREEN,
+                               curses.COLOR_YELLOW,
+                               curses.COLOR_BLUE,
+                               curses.COLOR_MAGENTA,
+                               curses.COLOR_CYAN,
+                               curses.COLOR_WHITE,
+                               curses.COLOR_BLACK]
+            COLORS = {}
+            N = 1
+            for n in range(len(color_list)):
+                for m in range(len(color_list)):
+                    curses.init_pair(N, color_list[n], color_list[m])
+                    COLORS[(color_names[n],color_names[m])]=curses.color_pair(N)
+                    N+=1
+            #self.COLORS = COLORS
+            return COLORS
 
-    def screen_print(self,m1):
-        for j in range(self.x):
-            for i in range(self.y):
-                self.screen.addstr(0, 0, m1[i, j], curses.color_pair(self.cp[('r','g')]))
+    def draw_all(self,stdscr):
+        COLORS = self.init_colors()
+        curses.curs_set(0)
+        while self.run:
+            stdscr.clear()
+            #stdscr.refresh()
+            self.scene.draw(stdscr, COLORS)
+            stdscr.refresh()
+            k = stdscr.getch()
+            if k == ord('q'):
+                self.scene = self.scene.quiting()
+            elif k == ord('h'):
+                #self.scene = self.help_p
+                self.scene = Help(self.scene)
+            #elif k == ord('c'):
+            #    self.scene = self.play
+            else:
+                smth = self.scene.inp_handler(k)
+                if smth:
+                    self.scene = smth
+            if not self.scene:
+                self.run = False
+        curses.curs_set(1)
 
-class Game(object):
-    def __init__(self):
-        self.init_game()
-        
-    def init_game(self):
-        m1 = Map(MXSIZE, MYSIZE)
-        self.console = Console()
-        self.console.update(m1)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     g1 = Game()
-    #g1.console.deinit_curses()
+    curses.wrapper(g1.draw_all)
