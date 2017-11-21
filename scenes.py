@@ -178,6 +178,8 @@ class PotionMaker():
         elif key == ord('m'):
             pot = self.make_pot()
             self.game.inv.add_item(pot)
+            self.game.logwrite("Got "+pot.fdescr())
+            
             return self.quiting()
         else:
             return None
