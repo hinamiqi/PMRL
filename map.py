@@ -1,4 +1,4 @@
-from curses import A_BOLD
+from curses import A_BOLD, A_NORMAL
 
 MAP_MARG = 1
 
@@ -42,7 +42,7 @@ class Field(list):
         try:
             upper = self[-1]
         except IndexError:
-            return False
+            return None
         else:
             return upper.bold
 
@@ -82,11 +82,14 @@ class Map(dict):
                 try:
                     obj = self[i, j]
                     cc = obj.color()
-                    #if obj.bold(): 
-                    #    stdscr.attron(A_BOLD)
-                    #stdscr.attron(A_BOLD)
-                    stdscr.addstr(m, n, str(obj), clrs[cc])
-                    #stdscr.attroff(A_BOLD)
+                    if obj.bold():
+                        attr = A_BOLD
+                    else:
+                        attr = A_NORMAL
+                    
+                    #stdscr.attron(A_BOLD | clrs[cc])
+                    stdscr.addstr(m, n, str(obj), clrs[cc] | attr )
+                    
                 except KeyError:
                     pass
                 n+=1

@@ -10,7 +10,7 @@ class World(object):
         self.init_world_obj()
         self.create_world(WSIZE,MXSIZE,MYSIZE)
         self.create_plants(WSIZE,MXSIZE,MYSIZE)
-        self.create_objs(WSIZE,MXSIZE,MYSIZE)
+        #self.create_objs(WSIZE,MXSIZE,MYSIZE)
 
     def init_world_obj(self):
         self.plants = {
@@ -19,9 +19,9 @@ class World(object):
                         Bush():0.05,
                       }
         self.objects = {
-                          Stone():0.002,
+                          Stone():0.02,
                           Mushroom():0.003,
-                          Stick():0.0001
+                          Stick():0.001
                         }
 
 
@@ -43,6 +43,14 @@ class World(object):
         #st = Stick()
         #self.map.place(st,WSIZE//2+3,WSIZE//2+3)
 
+    #def create_plants(self,WSIZE,MXSIZE,MYSIZE):
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #for plant in self.plants:
+                    #if random.random()<self.plants[plant]:
+                        #self.map.place(plant,i,j)
+                        #break
+    
     def create_plants(self,WSIZE,MXSIZE,MYSIZE):
         for i in range(1,WSIZE-2):
             for j in range(1,WSIZE-2):
@@ -50,13 +58,33 @@ class World(object):
                     if random.random()<self.plants[plant]:
                         self.map.place(plant,i,j)
                         break
-
+                dice = random.random()
+                N = find_min_less(dice, self.objects.values())
+                if N:
+                    obj=list(self.objects.keys())[list(self.objects.values()).index(N)]
+                    self.map.place(obj,i,j)
+                        
+    
+    
+    
+        
+    
     def create_objs(self,WSIZE,MXSIZE,MYSIZE):
         for i in range(1,WSIZE-2):
             for j in range(1,WSIZE-2):
                 if len(self.map[i, j]) <= 1:
-                    for obj in self.objects:
-                        if random.random()<self.objects[obj]:
-                            self.map.place(obj,i,j)
-                            break
+                    dice = random.random()
+                    
+                    N = find_min_less(dice, self.objects.values())
+                    if N:
+                        obj=list(self.objects.keys())[list(self.objects.values()).index(N)]
+                        self.map.place(obj,i,j)
+                            
+                    #for obj in self.objects:
+                        #if random.random()<self.objects[obj]:
+                            #self.map.place(obj,i,j)
+                            #break
 
+def find_min_less(d, xs):
+    if [i for i in xs if i >= d] != []:
+        return min([i for i in xs if i >= d])

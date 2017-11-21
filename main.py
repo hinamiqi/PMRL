@@ -5,7 +5,7 @@ import curses
 
 from scenes import *
 
-VERSION = '0.33'
+VERSION = '0.34'
 
 WSIZE = 50
 MXSIZE = 30
@@ -47,7 +47,7 @@ class Game(object):
             color_names =     ['r',
                                'g',
                                'y',
-                               'b',
+                               'bl',
                                'm',
                                'c',
                                'w',
@@ -88,6 +88,10 @@ class Game(object):
             #    self.scene = self.play
             else:
                 smth = self.scene.inp_handler(k)
+                '''
+                If scene.inp_handler returns smth that is not None
+                Switch to that scene
+                '''
                 if smth:
                     self.scene = smth
             if not self.scene:

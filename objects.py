@@ -20,18 +20,52 @@ class Obj(metaclass=abc.ABCMeta):
     def fdescr(self):
         return "Nothing to describe"
 
+class Potion(Obj):
+    def __init__(self, ingr):
+        self.ingr = ingr
+        w = Water()
+        self.ingr.append(w)
+        self.name = ""
+        for ingr in self.ingr:
+            self.name = self.name + ingr.descr()
+        self.color = self.ingr[0].color()
+        
+    def __str__(self):
+        return "!"
+    
+    def color(self):
+        return self.color
+    
+    def descr(self):
+        return self.name+" potion"
+    
+    def fdescr(self):
+        return "Strange potion of "+self.name
 
+class Water(Obj):
+    def __str__(self):
+        return "~"
+    def color(self):
+        return ('bl','b')
+    def descr(self):
+        return "water"
+    def fdescr(self):
+        return "That's definitely a water"
 
 class Stick(Obj):
 
     def __str__(self):
         return "/"
+    
+    def color(self):
+        return ('y','b')
 
     def descr(self):
         return "stick"
     
     def fdescr(self):
         return "Long piece of wood"
+    
 
 class Cauldron(Obj):
     pickable = False
@@ -77,7 +111,8 @@ class Ground(Obj):
 
 class Tree(Obj):
     pickable = False
-    bold = False
+    #bold = False
+    
     def __str__(self):
         return "&"
     def color(self):
@@ -91,7 +126,7 @@ class BoldTree(Tree):
     penetrable = False
     bold = True
     def color(self):
-        return 'y','g'
+        return 'g','b'
 
 class Stone(Obj):
     def __str__(self):
