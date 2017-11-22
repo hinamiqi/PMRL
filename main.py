@@ -44,14 +44,14 @@ class Game(object):
 
     def init_colors(self):
             curses.start_color()
-            color_names =     ['r',
-                               'g',
-                               'y',
-                               'bl',
-                               'm',
-                               'c',
-                               'w',
-                               'b']
+            color_names =     ['red',
+                               'green',
+                               'yellow',
+                               'blue',
+                               'mag',
+                               'cyan',
+                               'white',
+                               'black']
             color_list =      [curses.COLOR_RED,
                                curses.COLOR_GREEN,
                                curses.COLOR_YELLOW,

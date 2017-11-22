@@ -12,7 +12,7 @@ class Obj(metaclass=abc.ABCMeta):
 
     def color(self):
         #return 2
-        return ('w','b')
+        return ('white','black')
     
     def descr(self):
         return "void"
@@ -21,20 +21,22 @@ class Obj(metaclass=abc.ABCMeta):
         return "Nothing to describe"
 
 class Potion(Obj):
+    bold = True
     def __init__(self, ingr):
         self.ingr = ingr
-        w = Water()
-        self.ingr.append(w)
+        #w = Water()
+        #self.ingr.append(w)
         self.name = ""
         for ingr in self.ingr:
             self.name = self.name + ingr.descr()
-        self.color = self.ingr[0].color()
+        self.clr = self.ingr[0].color()
         
     def __str__(self):
         return "!"
     
     def color(self):
-        return self.color
+        return self.clr
+        #return ('cyan','black')
     
     def descr(self):
         return self.name+" potion"
@@ -46,7 +48,7 @@ class Water(Obj):
     def __str__(self):
         return "~"
     def color(self):
-        return ('bl','b')
+        return ('blue','black')
     def descr(self):
         return "water"
     def fdescr(self):
@@ -58,7 +60,7 @@ class Stick(Obj):
         return "/"
     
     def color(self):
-        return ('y','b')
+        return ('yellow','black')
 
     def descr(self):
         return "stick"
@@ -80,18 +82,6 @@ class Cauldron(Obj):
         return "Device for making potions"
 
 
-class Bush(Obj):
-    pickable = False
-    def __str__(self):
-        return '"'
-    def color(self):
-        #return 2
-        return ('g','b')
-    def descr(self):
-        return 'bush'
-    def fdescr(self):
-        return "Ordinary forest plant"
-
 class Ground(Obj):
     pickable = False
     def __init__(self,dftclr=None):
@@ -101,7 +91,7 @@ class Ground(Obj):
     def color(self):
         #return ('GREEN','BLACK')
         if not self.dftclr:
-            return ('g','b')
+            return ('green','black')
         else:
             return self.dftclr
 
@@ -116,7 +106,7 @@ class Tree(Obj):
     def __str__(self):
         return "&"
     def color(self):
-        return 'g','b'
+        return 'green','black'
     def descr(self):
         return 'tree'
     def fdescr(self):
@@ -126,13 +116,37 @@ class BoldTree(Tree):
     penetrable = False
     bold = True
     def color(self):
-        return 'g','b'
+        return 'green','black'
+
+
+class Bush(Obj):
+    pickable = False
+    def __str__(self):
+        return '"'
+    def color(self):
+        #return 2
+        return ('green','black')
+    def descr(self):
+        return 'bush'
+    def fdescr(self):
+        return "Ordinary forest plant"
+
+class Grass(Obj):
+    def __str__(self):
+        return "'"
+    def color(self):
+        #return 2
+        return ('green','black')
+    def descr(self):
+        return 'grass'
+    def fdescr(self):
+        return "Ordinary forest plant"
 
 class Stone(Obj):
     def __str__(self):
         return ","
     def color(self):
-        return 'w','b'
+        return 'white','black'
     def descr(self):
         return 'stone'
     def fdescr(self):
@@ -144,7 +158,7 @@ class Rock(Obj):
     def __str__(self):
         return "#"
     def color(self):
-        return 'b','w'
+        return 'black','white'
     def descr(self):
         return "rock"
     def fdescr(self):
@@ -154,7 +168,7 @@ class Mushroom(Obj):
     def __str__(self):
         return ";"
     def color(self):
-        return 'm','b'
+        return 'magenta','black'
     def descr(self):
         return 'mushroom'
     def fdescr(self):
@@ -165,5 +179,4 @@ class Player(Obj):
     pickable = False
     def __str__(self):
         return "@"
-    def color(self):
-        return 'w','b'
+

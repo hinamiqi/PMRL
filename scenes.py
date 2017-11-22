@@ -20,9 +20,9 @@ class Menu():
         self.startx_subtitle = int((width // 2) - (len(self.subtitle) // 2) - len(self.subtitle) % 2)
         self.startx_info = int((width // 2) - (len(self.info) // 2) - len(self.title) % 2)
         self.startx_bar = int((width // 2) - (len(self.bar) // 2) - len(self.title) % 2)
-        stdscr.attron(A_BOLD)
-        stdscr.addstr(height//2-2, self.startx_title, self.title, clrs['r','w'])
-        stdscr.attroff(A_BOLD)
+        #stdscr.attron(A_BOLD)
+        stdscr.addstr(height//2-2, self.startx_title, self.title, clrs['red','black'] | A_BOLD)
+        #stdscr.attroff(A_BOLD)
         stdscr.addstr(height//2-1, self.startx_subtitle, self.subtitle)
         stdscr.addstr(height//2, self.startx_info, self.info)
         stdscr.addstr(height-1, self.startx_bar, self.bar)
@@ -48,7 +48,7 @@ class Help():
 
     def draw(self,stdscr, clrs):
         stdscr.attron(A_BOLD)
-        stdscr.addstr(MAP_MARG, MAP_MARG, self.title, clrs['b','w'])
+        stdscr.addstr(MAP_MARG, MAP_MARG, self.title, clrs['black','white'])
         stdscr.attroff(A_BOLD)
         i = MAP_MARG + 1
         for line in self.data:
@@ -66,17 +66,20 @@ class Inventory():
         self.title = "Inventory:"
         #self.prev_scene = prev_secene
         self.items = items
-        self.actions = ""
+        self.m = ""
+        self.actions = self.m
         
+    def set_drop(self):
+        self.actions = "[D]rop what?"
     
-    def update(self, prev_secene, add=None):
-        self.prev_scene = prev_secene
+    def update(self, prev_scene, add=None):
+        self.prev_scene = prev_scene
         self.pos = 0
         self.calc_items()
         if add:
             self.actions = "[A]dd what?"
         else:
-            self.actions = ""
+            self.actions = self.m
     
     def delete_item(self, item):
         self.items.remove(item)
@@ -100,13 +103,13 @@ class Inventory():
         
         n = 0
         if self.item_list == []:
-            stdscr.addstr(i, 2, "Empty", clrs['w','b'] | A_DIM)
+            stdscr.addstr(i, 2, "Empty", clrs['white','black'] | A_DIM)
         else:
             for item in self.item_list:
                 if n == self.pos:
-                    color =  clrs['b','w']
+                    color =  clrs['black','white']
                 else:
-                    color =  clrs['w','b']
+                    color =  clrs['white','black']
                 string = item[0].descr()+" "+"x"+str(item[1])
                 stdscr.addstr(i, 2, string, color)
                 i+=1
@@ -127,16 +130,22 @@ class Inventory():
             self.pos -=1
             if self.pos < 0:
                 self.pos = len(self.item_list)-1
-        elif key == ord('a') and self.actions != "" and len(self.items)>0:
+        elif key == ord('a') and self.actions != self.m and len(self.items)>0:
             item = self.item_list[self.pos][0]
             self.items.remove(item)
+            return self.quiting(item)
+        elif key == ord('d') and self.actions == "[D]rop what?" and len(self.items)>0:
+            item = self.item_list[self.pos][0]
+            self.items.remove(item)
+            self.prev_scene.logwrite("You drop "+item.fdescr())
             return self.quiting(item)
         else:
             return None
 
     def quiting(self, item=None):
         if item:
-            self.prev_scene.add_item(item)
+            self.prev_scene.return_item(item)
+            
         return self.prev_scene
 
 class PotionMaker():
@@ -148,10 +157,11 @@ class PotionMaker():
         self.fire = False
         self.ingr = []
     
-    def add_item(self, item):
+    def return_item(self, item):
         self.ingr.append(item)
     
     def make_pot(self):
+        
         return Potion(self.ingr)
         
     
@@ -176,7 +186,7 @@ class PotionMaker():
             self.game.inv.update(self, add=True)
             return self.game.inv
         elif key == ord('m'):
-            pot = self.make_pot()
+            pot = Potion(self.ingr)
             self.game.inv.add_item(pot)
             self.game.logwrite("Got "+pot.fdescr())
             
@@ -218,6 +228,11 @@ class Play():
         self.paneltext = "Here "+self.obj_here().descr()
         
     
+    def return_item(self, item):
+        self.world.map.place(item, self.x_w_cord, self.y_w_cord)
+        self.move([0, 0])
+        
+    
     def obj_here(self, x=None,y=None):
         if x == None and y == None:
             x,y = self.x_w_cord,self.y_w_cord
@@ -240,8 +255,13 @@ class Play():
         if key == ord('i'):
             self.inv.update(self, add=None)
             return self.inv
+        elif key == ord('d'):
+            self.inv.update(self, add=None)
+            self.inv.set_drop()
+            return self.inv
         elif key == ord('m'):
             return PotionMaker(self, self.mx, self.my)
+        
         return None
         
         

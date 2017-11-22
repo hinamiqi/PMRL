@@ -17,6 +17,7 @@ class World(object):
                         Tree():0.1,
                         BoldTree():0.01,
                         Bush():0.05,
+                        Grass():0.03
                       }
         self.objects = {
                           Stone():0.02,
@@ -35,9 +36,9 @@ class World(object):
                     obj = Rock()
                 else:
                     rndclr = (random.choice((\
-                                               'g',\
-                                               'y',\
-                                               'b')),'b')
+                                               'green',\
+                                               'yellow',\
+                                               'black')),'black')
                     obj = Ground(rndclr)
                 self.map.place(obj,i,j)
         #st = Stick()
