@@ -1,6 +1,7 @@
 import random
 from objects import *
 from map import *
+from generators import *
 
 class World(object):
     def __init__(self, WSIZE, MXSIZE, MYSIZE):
@@ -9,7 +10,8 @@ class World(object):
         self.mysize = MYSIZE
         self.init_world_obj()
         self.create_world(WSIZE,MXSIZE,MYSIZE)
-        self.create_plants(WSIZE,MXSIZE,MYSIZE)
+        self.create_patterns(WSIZE,MXSIZE,MYSIZE)
+        #self.create_plants(WSIZE,MXSIZE,MYSIZE)
         #self.create_objs(WSIZE,MXSIZE,MYSIZE)
 
     def init_world_obj(self):
@@ -51,6 +53,35 @@ class World(object):
                     #if random.random()<self.plants[plant]:
                         #self.map.place(plant,i,j)
                         #break
+    
+    def create_patterns(self,WSIZE,MXSIZE,MYSIZE):
+        x0, y0 = WSIZE//2, WSIZE//2
+        #A = new_array(WSIZE,WSIZE)
+        #pattern = elips(A, x0, y0, 5, 20)
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #if pattern[i][j] == "x":
+                    #self.map.place(Tree(),i,j)
+        #B = new_array(WSIZE,WSIZE)
+        #pattern2 = sinus(B, x0, y0, 20)
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #if pattern2[i][j] == "x":
+                    #self.map.place(Bush(),i,j)
+        #C = new_array(WSIZE,WSIZE)
+        #pattern3 = romb(C, x0, y0+20, 10)
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #if pattern3[i][j] == "x":
+                    #self.map.place(Grass(),i,j)
+        a = random.randint(0,100)
+        b = random.randint(0,100)
+        D = new_array(WSIZE+a,WSIZE+b)
+        pattern4 = fract(D, WSIZE+a, WSIZE+b)
+        for i in range(1,WSIZE-2):
+            for j in range(1,WSIZE-2):
+                if pattern4[i][j] == "x":
+                    self.map.place(Tree(),i,j)
     
     def create_plants(self,WSIZE,MXSIZE,MYSIZE):
         for i in range(1,WSIZE-2):
