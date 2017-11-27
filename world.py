@@ -74,14 +74,22 @@ class World(object):
             #for j in range(1,WSIZE-2):
                 #if pattern3[i][j] == "x":
                     #self.map.place(Grass(),i,j)
-        a = random.randint(0,100)
-        b = random.randint(0,100)
-        D = new_array(WSIZE+a,WSIZE+b)
-        pattern4 = fract(D, WSIZE+a, WSIZE+b)
+        #a = random.randint(0,100)
+        #b = random.randint(0,100)
+        #D = new_array(WSIZE+a,WSIZE+b)
+        #pattern4 = fract(D, WSIZE+a, WSIZE+b)
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #if pattern4[i][j] == "x":
+                    #self.map.place(Tree(),i,j)
+        p1 = Fractal(random.randint(WSIZE//2,WSIZE),random.randint(WSIZE//2,WSIZE))
         for i in range(1,WSIZE-2):
             for j in range(1,WSIZE-2):
-                if pattern4[i][j] == "x":
-                    self.map.place(Tree(),i,j)
+                try:
+                    if p1.array[j][i] == "x":
+                        self.map.place(Tree(),i,j)
+                except IndexError:
+                    pass
     
     def create_plants(self,WSIZE,MXSIZE,MYSIZE):
         for i in range(1,WSIZE-2):

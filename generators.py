@@ -55,47 +55,131 @@ def sinus(array, x0, y0, r):
             array[y][x+x0]="x"
     return array
 
-def fract(array, XS, YS):
+#def fract(array, XS, YS):
     
-    pairs = []
-    x0 = 0
-    y0 = 0
-    x,y = x0, y0
-    dx = 1
-    dy = 1
-    k = 1
-    pairs.append([x,y])
-    flag = True
-    while True:
-        x = x + dx
-        y = y + dy
-        if x == XS or x == 0:
-            dx = dx*(-1)
-        if y == YS or y == 0:
-            dy = dy*(-1)
-        #print(dx, dy)
+    #pairs = []
+    #x0 = 0
+    #y0 = 0
+    #x,y = x0, y0
+    #dx = 1
+    #dy = 1
+    #k = 1
+    #pairs.append([x,y])
+    #flag = True
+    #while True:
+        #x = x + dx
+        #y = y + dy
+        #if x == XS or x == 0:
+            #dx = dx*(-1)
+        #if y == YS or y == 0:
+            #dy = dy*(-1)
+        ##print(dx, dy)
         
         
-        k = k*(-1)
-        if k == 1:
-            pairs.append([x,y])
-            #print(x,' ',y)
-        #pairs.append([x,y])
+        #k = k*(-1)
+        #if k == 1:
+            #pairs.append([x,y])
+            ##print(x,' ',y)
+        ##pairs.append([x,y])
         
-        if (x==XS and y==YS) or (x==0 and y==0):
-            break
+        #if (x==XS and y==YS) or (x==0 and y==0):
+            #break
             
-    #return pairs
-    for pair in pairs:
-        array[pair[1]][pair[0]] = "x"
+    ##return pairs
+    #for pair in pairs:
+        #array[pair[1]][pair[0]] = "x"
     
-    return array
+    #return array
         
-        
-        
+class Fractal(object):
+    def __init__(self, X, Y):
+        self.step = 3
+        self.x = X
+        self.y = Y
+        self.plot()
+        self.build_array()
+    #def resize(self):
+        #self.w = self.win.width
+        #self.h = self.win.height
+        #print(self.w, self.h)
+        #self.vertex_list = self.plot()
     
-    
+    def plot(self):
+        step = self.step
+        XS = self.x
+        YS = self.y
+        pairs = []
+        dx = step
+        dy = step
+        x  = 0
+        y  = 0
+        k  = 1
+        pairs.append(x)
+        pairs.append(y)
+        pairs.append(x+dx)
+        pairs.append(y+dy)
+        i = 0
+        while True:
+            x = x + dx
+            y = y + dy
+            if (x==XS and y==YS) or (x==0 and y==0):
+                break
+            if (x==XS and y==YS) or (x==0 and y==0):
+                break
+            if x >= XS or x <= 0:
+                dx = dx*(-1)
+            if y >= YS or y <= 0:
+                dy = dy*(-1)
+            k = k*(-1)
+            if k == 1:
+                pairs.append(x)
+                pairs.append(y)
+                pairs.append(x+dx)
+                pairs.append(y+dy)
+            i += 1
 
+        #return pairs
+        self.pairs = pairs
+        
+    
+    def build_array(self):
+        A = new_array(self.x, self.y)
+        #print("pairs: ", self.pairs)
+        k = 1
+        for i in range(0, len(self.pairs), 4):
+            startx = self.pairs[i]
+            starty = self.pairs[i+1]
+            endx   = self.pairs[i+2]
+            endy   = self.pairs[i+3]
+            dx = (endx-startx)//abs(endx-startx)
+            dy = (endy-starty)//abs(endy-starty)
+            #print("pair ", k, ":")
+            #k += 1
+            #print("start ", startx, " ", starty)
+            #print("end ", endx, " ", endy)
+            #m = [i for i in range(startx,endx,dx)]
+            #n = [i for i in range(starty,endy,dy)]
+            #print("m, n: ",m,n)
+            #for i in range(len(m)):
+             #A[n[i]][m[i]] = "x"
+            x = startx
+            y = starty
+            while x != endx and y != endy:
+
+                #print("x, y ", x," ", y)
+                try:
+                    A[y][x] = "x"
+                except IndexError:
+                    pass
+                x += dx
+                y += dy
+
+
+                    
+        self.array = A
+        #print_array(A)
+    
+#f1 = Fractal(44,105)
 # = new_array(20,20)
 
 #print_array(create_quad(A, 1,1, 6,7))
