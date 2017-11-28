@@ -2,6 +2,7 @@ import random
 from objects import *
 from map import *
 from generators import *
+import worldgen
 
 class World(object):
     def __init__(self, WSIZE, MXSIZE, MYSIZE):
@@ -82,14 +83,26 @@ class World(object):
             #for j in range(1,WSIZE-2):
                 #if pattern4[i][j] == "x":
                     #self.map.place(Tree(),i,j)
-        p1 = Fractal(random.randint(WSIZE//2,WSIZE),random.randint(WSIZE//2,WSIZE))
+        #p1 = Fractal(random.randint(WSIZE//2,WSIZE),random.randint(WSIZE//2,WSIZE))
+        #for i in range(1,WSIZE-2):
+            #for j in range(1,WSIZE-2):
+                #try:
+                    #if p1.array[j][i] == "x":
+                        #self.map.place(Tree(),i,j)
+                #except IndexError:
+                    #pass
+        w1 = worldgen.World(WSIZE)
+        seq = [Grass(), Bush(), Tree(), BoldTree()]
         for i in range(1,WSIZE-2):
             for j in range(1,WSIZE-2):
                 try:
-                    if p1.array[j][i] == "x":
-                        self.map.place(Tree(),i,j)
+                    if w1[i][j] == 1:
+                        choice = worldgen.choice_distr(seq)
+                        self.map.place(choice,i,j)
                 except IndexError:
                     pass
+                        
+        
     
     def create_plants(self,WSIZE,MXSIZE,MYSIZE):
         for i in range(1,WSIZE-2):

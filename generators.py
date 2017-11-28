@@ -11,7 +11,7 @@ def print_array(array):
             st += symb
         print(st)
 
-def create_quad(array, x1, y1, x2, y2):
+def quad(array, x1, y1, x2, y2):
     for i in range(x1, x2):
         for j in range(y1, y2):
             array[j][i] = "x"
@@ -55,41 +55,6 @@ def sinus(array, x0, y0, r):
             array[y][x+x0]="x"
     return array
 
-#def fract(array, XS, YS):
-    
-    #pairs = []
-    #x0 = 0
-    #y0 = 0
-    #x,y = x0, y0
-    #dx = 1
-    #dy = 1
-    #k = 1
-    #pairs.append([x,y])
-    #flag = True
-    #while True:
-        #x = x + dx
-        #y = y + dy
-        #if x == XS or x == 0:
-            #dx = dx*(-1)
-        #if y == YS or y == 0:
-            #dy = dy*(-1)
-        ##print(dx, dy)
-        
-        
-        #k = k*(-1)
-        #if k == 1:
-            #pairs.append([x,y])
-            ##print(x,' ',y)
-        ##pairs.append([x,y])
-        
-        #if (x==XS and y==YS) or (x==0 and y==0):
-            #break
-            
-    ##return pairs
-    #for pair in pairs:
-        #array[pair[1]][pair[0]] = "x"
-    
-    #return array
         
 class Fractal(object):
     def __init__(self, X, Y):
