@@ -1,7 +1,6 @@
 import random
 from objects import *
 from map import *
-from generators import *
 import worldgen
 
 class World(object):

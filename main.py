@@ -7,7 +7,7 @@ from scenes import *
 
 VERSION = '0.34'
 
-WSIZE = 500
+WSIZE = 100
 MXSIZE = 30
 MYSIZE = 20
 MAP_MARG = 1 # 0 - 10
