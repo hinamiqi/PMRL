@@ -5,12 +5,19 @@ import curses
 
 from scenes import *
 
-VERSION = '0.34'
+VERSION = '0.35'
 
-WSIZE = 100
-MXSIZE = 30
-MYSIZE = 20
-MAP_MARG = 1 # 0 - 10
+WORLD_SIZE = 100
+MAP_SIZE = 80
+SCR_XSIZE = 60
+SCR_YSIZE = 25
+#MAP_MARG = 1 # 0 - 10
+
+PAR = (     VERSION,     \
+            WORLD_SIZE,  \
+            MAP_SIZE,    \
+            SCR_XSIZE,   \
+            SCR_YSIZE    )
 
 '''
 Главный объект, содержащий в себе основные переменные (созданный или
@@ -39,7 +46,7 @@ class Game(object):
         #self.menu = Menu()
         #self.help_p = Help()
         #self.play = play.Play(WSIZE, MXSIZE, MYSIZE, MAP_MARG, Menu())
-        self.scene = Menu(VERSION, WSIZE, MXSIZE, MYSIZE)
+        self.scene = Menu(PAR)
         self.run = True
 
     def init_colors(self):

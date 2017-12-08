@@ -20,6 +20,41 @@ class Obj(metaclass=abc.ABCMeta):
     def fdescr(self):
         return "Nothing to describe"
 
+class Elem(Obj):
+    #penetrable = 
+    desc = None
+    fdesc = None
+    clr = None
+    str = None 
+   
+    
+    def __str__(self):
+        if self.str:
+            return self.str
+        else:
+            return " "
+        
+    def color(self):
+        if self.clr:
+            return self.clr
+        else:
+            return ('white','black')
+    
+    def descr(self):
+        if self.desc:
+            return self.desc
+        else:
+            return "void"
+    
+    def fdescr(self):
+        if self.fdesc:
+            return self.fdesc
+        else:
+            return "Nothing to describe"
+    
+
+    
+
 class Potion(Obj):
     bold = True
     def __init__(self, ingr):
@@ -82,6 +117,21 @@ class Cauldron(Obj):
         return "Device for making potions"
 
 
+#class Ground(Obj):
+    #pickable = False
+    #def __init__(self,dftclr=None):
+        #self.dftclr = dftclr
+    #def __str__(self):
+        #return "."
+    #def color(self):
+        ##return ('GREEN','BLACK')
+        #if not self.dftclr:
+            #return ('green','black')
+        #else:
+            #return self.dftclr
+
+    #def descr(self):
+        #return 'ground'
 class Ground(Obj):
     pickable = False
     def __init__(self,dftclr=None):
@@ -101,12 +151,16 @@ class Ground(Obj):
 
 class Tree(Obj):
     pickable = False
+    clr = None
     #bold = False
     
     def __str__(self):
         return "&"
     def color(self):
-        return 'green','black'
+        if self.clr:
+            return self.clr
+        else:
+            return 'green','black'
     def descr(self):
         return 'tree'
     def fdescr(self):
@@ -168,7 +222,7 @@ class Mushroom(Obj):
     def __str__(self):
         return ";"
     def color(self):
-        return 'magenta','black'
+        return 'mag','black'
     def descr(self):
         return 'mushroom'
     def fdescr(self):

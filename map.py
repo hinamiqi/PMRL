@@ -3,7 +3,7 @@ from curses import A_BOLD, A_NORMAL
 MAP_MARG = 1
 
 class Field(list):
-    def __init__(self, x, y, defstr=" "):
+    def __init__(self, x, y, defstr="."):
         self.x, self.y = x, y
         self.defstr = defstr
 
@@ -27,7 +27,7 @@ class Field(list):
         try:
             upper = self[-1]
         except IndexError:
-            return ('w','b')
+            return ('white','black')
         else:
             return upper.color()
 
@@ -59,51 +59,53 @@ class Field(list):
 
 class Map(dict):
 
-    def __init__(self, WSIZE,MXSIZE,MYSIZE):
-        self.x, self.y = WSIZE, WSIZE
+    def __init__(self, MXSIZE, MYSIZE):
+        #self.x, self.y = WSIZE, WSIZE
         self.mx, self.my = MXSIZE, MYSIZE
         self.screen = None
-        for j in range(self.y):
-            for i in range(self.x):
+        for j in range(self.my):
+            for i in range(self.mx):
                 self[i, j] = Field(i,j)
-        self.aloop = []
+        #self.aloop = []
         self.console = None
-        self.prng = ((self.x//2-MXSIZE,self.x//2+MXSIZE),(self.y//2-MYSIZE,self.y//2+MYSIZE))
+        #self.prng = ((self.x//2-MXSIZE,self.x//2+MXSIZE),(self.y//2-MYSIZE,self.y//2+MYSIZE))
 
     #__repr__ = object.__repr__
     #__str__ = object.__str__
 
     def print(self, stdscr, clrs):
-        prng = self.prng
+        #prng = self.prng
         m = MAP_MARG
-        for j in range(prng[1][0],prng[1][1]):
+        for j in range(self.my):
             n = MAP_MARG
-            for i in range(prng[0][0],prng[0][1]):
-                try:
-                    obj = self[i, j]
-                    cc = obj.color()
-                    if obj.bold():
-                        attr = A_BOLD
-                    else:
-                        attr = A_NORMAL
+            for i in range(self.mx):
+                #try:
+                obj = self[i, j]
+                cc = obj.color()
+                if obj.bold():
+                    attr = A_BOLD
+                else:
+                    attr = A_NORMAL
+                
+                #stdscr.attron(A_BOLD | clrs[cc])
+                stdscr.addstr(m, n, str(obj), clrs[cc] | attr )
                     
-                    #stdscr.attron(A_BOLD | clrs[cc])
-                    stdscr.addstr(m, n, str(obj), clrs[cc] | attr )
-                    
-                except KeyError:
-                    pass
+                #except KeyError:
+                #    pass
                 n+=1
             m+=1
-        x = prng[0][1]-self.mx//2
-        y = prng[1][1]-self.my//2
+        #x = prng[0][1]-self.mx//2
+        #y = prng[1][1]-self.my//2
 
     def place(self, obj, x, y, actions=False):
         "Places obj on the map on x, y."
-        self[x, y].append(obj)
-        obj.pos = x, y
-        obj.map = self
-        if actions:
-            self.aloop.append(obj)
+        if obj:
+            self[x, y].append(obj)
+            obj.pos = x, y
+            obj.map = self
+            if actions:
+                self.aloop.append(obj)
+
 
     def distance(self, obj1, obj2):
         """Returns the distance between obj1 and obj2"""

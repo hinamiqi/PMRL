@@ -6,16 +6,16 @@ from curses import A_BOLD, A_DIM
 #    def __init__
 
 class Menu():
-    def __init__(self, VERSION, WSIZE, MXSIZE, MYSIZE):
-        self.par = (WSIZE, MXSIZE, MYSIZE)
+    def __init__(self, PAR):
+        self.par = PAR
         self.title = "POTION MASTER RL"
-        self.subtitle = "v" + VERSION
+        self.subtitle = "v" + PAR[0]
         self.info = "Roguelike about making potions and stuff."
         self.bar = "[C]ontinue   [H]elp   [Q]uit"
         #self.game = None
 
     def draw(self, stdscr, clrs):
-        height, width = self.par[2], self.par[1]*2
+        height, width = self.par[4], self.par[3]
         self.startx_title = int((width // 2) - (len(self.title) // 2) - len(self.title) % 2)
         self.startx_subtitle = int((width // 2) - (len(self.subtitle) // 2) - len(self.subtitle) % 2)
         self.startx_info = int((width // 2) - (len(self.info) // 2) - len(self.title) % 2)
@@ -29,7 +29,9 @@ class Menu():
 
     def inp_handler(self, key):
         if key == ord('c'):
-                return Play(*self.par, 1, self)
+
+                return Play(self.par, 1, self)
+                
         else:
             return None
         #pass
@@ -60,6 +62,11 @@ class Help():
 
     def quiting(self):
         return self.prev_scene
+
+        
+        
+        
+        
 
 class Inventory():
     def __init__(self, items):
@@ -198,45 +205,58 @@ class PotionMaker():
         return self.game
 
 class Play():
-    def __init__(self, WSIZE, MXSIZE, MYSIZE, MAP_MARG, MENU):
+    def __init__(self, PAR, MAP_MARG, MENU):
+        WORLD_SIZE = PAR[1]
+        XSIZE = PAR[3]
+        YSIZE = PAR[4]
         self.menu = MENU
-        self.world = World(WSIZE, MXSIZE, MYSIZE)
-        self.mx, self.my = MXSIZE, MYSIZE
-        self.x_w_cord = self.world.size//2
-        self.y_w_cord = self.world.size//2
-        self.player = Player()
-        obj = Cauldron()
+        self.world = World(PAR)
+        self.mx, self.my = PAR[3]//2, PAR[4]-5
+        #self.x_w_cord = self.world.size//2
+        #self.y_w_cord = self.world.size//2
+        #self.player = Player()
+        #obj = Cauldron()
         #self.player.bp = [obj]
         self.inv = Inventory([])
-        self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
+        #self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
         self.log = ['','','']
         self.paneltext = ""
-
+    
+    
+        
+    
     def draw(self, stdscr, clrs):
         self.update_map()
         
-        self.world.map.print(stdscr, clrs)
+        #self.world.map.print(stdscr, clrs)
+        self.world.print(stdscr, clrs)
         stdscr.attron(A_BOLD)
         stdscr.addstr(self.my+1, self.mx+1, self.paneltext)
         stdscr.attroff(A_BOLD)
         self.log_draw(stdscr)
 
     def update_map(self):
-        self.world.map.prng = ((self.x_w_cord-self.mx//2,self.x_w_cord+self.mx//2),\
-                         (self.y_w_cord-self.my//2,self.y_w_cord+self.my//2))
-        
-        self.paneltext = "Here "+self.obj_here().descr()
+        #self.world.map.prng = ((self.x_w_cord-self.mx//2,self.x_w_cord+self.mx//2),\
+        #                 (self.y_w_cord-self.my//2,self.y_w_cord+self.my//2))
+        self.world.map_update()
+        #self.paneltext = "Here "+self.obj_here().descr()
+        #self.paneltext = str(self.world.x) + " " + str(self.world.y)
+        self.paneltext = self.world.msg
         
     
     def return_item(self, item):
-        self.world.map.place(item, self.x_w_cord, self.y_w_cord)
-        self.move([0, 0])
+        #self.world.map.place(item, self.x_w_cord, self.y_w_cord)
+        self.world.place(item, self.world.x, self.world.y)
+        #self.move([0, 0])
         
     
     def obj_here(self, x=None,y=None):
         if x == None and y == None:
-            x,y = self.x_w_cord,self.y_w_cord
-        obj = self.world.map[x, y][-2]
+            x,y = self.world.x,self.world.y
+        #obj = self.world.map[x, y][-2]
+        #obj = self.world.map[x, y][-2]
+        #obj = self.world.map[x, y][-1]
+        obj = self.world.objects[self.world.upper(x, y)]
         return obj
     
     def inp_handler(self, key):
@@ -267,29 +287,37 @@ class Play():
         
 
     def move(self,vector):
-        nx = self.x_w_cord + vector[0]
-        ny = self.y_w_cord + vector[1]
-        f = self.world.map[nx ,ny].penetrable()
+        #wx = self.world.x + vector[0]
+        #wy = self.world.y + vector[1]
+        mx = self.mx//2 + vector[0]
+        my = self.my//2 + vector[1]
+
+        f = self.world.collision(mx, my)
         if f:
-            self.world.map.remove(self.player,self.x_w_cord,self.y_w_cord)
-            self.x_w_cord += vector[0]
-            self.y_w_cord += vector[1]
-            self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
-            self.update_map()
-            
+            #self.world.map.remove(self.player,self.x_w_cord,self.y_w_cord)
+            #self.x_w_cord += vector[0]
+            #self.y_w_cord += vector[1]
+            #self.world.map.place(self.player,self.x_w_cord,self.y_w_cord)
+            #self.update_map()
+            self.world.x += vector[0]
+            self.world.y += vector[1]
+            self.world.map_update()
             
 
     def get_obj(self):
-        x, y = self.x_w_cord, self.y_w_cord
+        x, y = self.world.x, self.world.y
         obj = self.obj_here()
+        #self.logwrite("Got "+obj.descr())
         if obj.pickable:
-            self.world.map.remove(obj, x, y)
+            #self.world.map.remove(obj, x, y)
             self.inv.add_item(obj)
             #self.player.bp.append(obj)
             #self.logwrite("Got "+obj.descr())
             #self.logtext = "Got "+obj.descr()
             self.logwrite("Got "+obj.descr())
-            
+            self.world.delete(x, y)
+            #self.world.world_map.remove(self.world.world_map[x][y][-1])
+            self.world.map_update()
 
     def logwrite(self, text):
         self.log.append(text)
