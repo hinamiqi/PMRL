@@ -10,9 +10,9 @@ class WorldMap(list):
         self.size = size
         self.mins = 5
         self.maxs = 20
-        #self.create_array()
-        self.create_quads2()
-        #self.generate_quads()
+        self.create_array()
+        self.create_quads()
+        self.generate_quads()
         
         #self = [[[[0] for j in range(self.size) ]] for i in range(self.size)]
         for i in range(self.size):
