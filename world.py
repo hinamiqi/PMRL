@@ -10,7 +10,7 @@ class WorldMap(list):
     def __init__(self, size):
         self.size = size
         self.mins = 5
-        self.maxs = self.size //10
+        self.maxs = self.size //50
         self.create_array()
         self.create_quads()
         self.generate_quads()
