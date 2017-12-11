@@ -1,6 +1,51 @@
 import abc
+import json
+from ast import literal_eval as le
+
+class ObjLoader():
+    def __init__(self):
+        self.objects = []
+    
+    def load_file(self):
+        with open('obj.json', encoding='utf-8') as data_file:
+           data = json.loads(data_file.read())
+        for el in data:
+            obj = AbsObj(pickable=le(el["pickable"]),\
+                         penetrable=le(el["penetrable"]),\
+                         bold=le(el["bold"]),\
+                         symbol=el["symbol"],\
+                         clr=le(el["color"]),\
+                         des=el["des"],\
+                         fdes=el["fdes"])
+            self.objects.append(obj)
 
 '''OBJECTS'''
+
+class AbsObj():
+    
+    def __init__(self,pickable=True,penetrable=True,symbol=".",bold=False,clr=('white','black'),des="stuff",fdes="it exist"):
+        self.pickable = pickable
+        self.penetrable = penetrable
+        self.symbol = symbol
+        self.bold = bold
+        self.clr = clr
+        self.des = des
+        self.fdes = fdes
+        
+    def __str__(self):
+        return self.symbol
+    
+    def color(self):
+        return self.clr
+    
+    def descr(self):
+        return self.des
+    
+    def fdescr(self):
+        return self.fdes
+    
+    
+
 
 class Obj(metaclass=abc.ABCMeta):
     pickable = True
@@ -26,8 +71,7 @@ class Elem(Obj):
     fdesc = None
     clr = None
     str = None 
-   
-    
+
     def __str__(self):
         if self.str:
             return self.str
@@ -234,3 +278,6 @@ class Player(Obj):
     def __str__(self):
         return "@"
 
+#l = ObjLoader()
+#l.load_file()
+#print(l.objects)

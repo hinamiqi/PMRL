@@ -3,7 +3,7 @@ from curses import A_BOLD, A_NORMAL
 MAP_MARG = 1
 
 class Field(list):
-    def __init__(self, x, y, defstr="."):
+    def __init__(self, x, y, defstr=" "):
         self.x, self.y = x, y
         self.defstr = defstr
 

@@ -7,7 +7,7 @@ from scenes import *
 
 VERSION = '0.35'
 
-WORLD_SIZE = 100
+WORLD_SIZE = 300
 MAP_SIZE = 80
 SCR_XSIZE = 60
 SCR_YSIZE = 25

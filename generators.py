@@ -1,7 +1,68 @@
 import math
+import random as r
 
-def new_array(x,y):
-    return [["." for i in range(x+1)] for i in range(y+1)]
+"""GENERATORS"""
+
+class Gen():
+    def __init__(self, func, x, y, val0, val1):
+        self.x = x
+        self.y = y
+        self.val0 = val0
+        self.val1 = val1
+        if func == 'forest':
+            self.forest()
+        elif func == 'quads':
+            self.quads()
+        elif func == 'random':
+            self.rand_fill()
+        elif func == 'circles':
+            self.circles()
+        else:
+            self.empty()
+        
+    def forest(self):
+        f1 = Fractal(self.x,self.y,self.val0,self.val1)
+        self.array = f1.array
+
+
+    def quads(self):
+        array = new_array(self.x, self.y, self.val0)
+        for i in range(r.randint(1,max(self.x,self.y))):
+            sx = r.randint(0,self.x-1)
+            sy = r.randint(0,self.y-1)
+            ex = r.randint(sx,self.x)
+            ey = r.randint(sy,self.y)
+            array = quad(array, sx, sy, ex, ey, self.val1)
+        self.array = array
+
+    def circles(self):
+        array = new_array(self.x, self.y, self.val0)
+        for i in range(r.randint(1,max(self.x,self.y))):
+            R = r.randint(0,min(self.x//2,self.y//2))
+            x = r.randint(R,self.x-R)
+            y = r.randint(R,self.y-R)
+          
+            array = circle(array, x, y, R, self.val1)
+        self.array = array
+        
+    
+    def rand_fill(self):
+        array = [[r.choice((self.val0,self.val1))] for i in range(self.y)]
+        self.array = array
+    
+    def empty(self):
+        array = new_array(self.x,self.y,self.val0)
+        for i in range(r.randint(1,max(self.x,self.y))):
+            sx = r.randint(0,self.x-1)
+            sy = r.randint(0,self.y-1)
+            array[sy][sx] = self.val1
+        self.array = array
+
+        
+        
+
+def new_array(x,y, val):
+    return [[val for i in range(x+1)] for i in range(y+1)]
 
 def print_array(array):
     for line in array:
@@ -11,10 +72,10 @@ def print_array(array):
             st += symb
         print(st)
 
-def quad(array, x1, y1, x2, y2):
+def quad(array, x1, y1, x2, y2, val):
     for i in range(x1, x2):
         for j in range(y1, y2):
-            array[j][i] = "x"
+            array[j][i] = val
     return array
 
 def romb(array, x0, y0, r):
@@ -32,11 +93,11 @@ def romb(array, x0, y0, r):
     
     return array
 
-def circle(array, x0, y0, r):
+def circle(array, x0, y0, r, v1):
     for x in range(-r,r):
         y1 = round(math.sqrt((r**2 - (x)**2)))
         for y in range(y0-y1,y0+y1):
-            array[y][x+x0]="x"
+            array[y][x+x0]=v1
     return array
 
 def elips(array, x0, y0, a, b):
@@ -57,12 +118,12 @@ def sinus(array, x0, y0, r):
 
         
 class Fractal(object):
-    def __init__(self, X, Y):
-        self.step = 3
+    def __init__(self, X, Y, v0, v1):
+        self.step = r.randint(1,7)
         self.x = X
         self.y = Y
         self.plot()
-        self.build_array()
+        self.build_array(v0, v1)
     #def resize(self):
         #self.w = self.win.width
         #self.h = self.win.height
@@ -107,8 +168,9 @@ class Fractal(object):
         self.pairs = pairs
         
     
-    def build_array(self):
-        A = new_array(self.x, self.y)
+    def build_array(self, v0, v1):
+        #A = new_array(self.x, self.y)
+        A = [[v0 for i in range(self.x+1)] for i in range(self.y+1)]
         #print("pairs: ", self.pairs)
         k = 1
         for i in range(0, len(self.pairs), 4):
@@ -133,14 +195,11 @@ class Fractal(object):
 
                 #print("x, y ", x," ", y)
                 try:
-                    A[y][x] = "x"
+                    A[y][x] = v1
                 except IndexError:
                     pass
                 x += dx
                 y += dy
-
-
-                    
         self.array = A
         #print_array(A)
     
@@ -157,3 +216,9 @@ class Fractal(object):
         #a, b = i, j
         #print('new size: ',i," ",j)
         #print_array(fract(new_array(a,b),a,b))
+
+#val0 = r.choice((1,2,3))
+#val1 = r.choice((4,5,6,7))
+#func = r.choice(('forest','quads','random','empty'))
+#gen = Gen(func, 10, 10, val0, val1)
+#print_array(gen.array)

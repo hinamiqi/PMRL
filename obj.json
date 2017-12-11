@@ -1,0 +1,79 @@
+[
+                {
+                "des":"rock",
+                "fdes":"Very solid rock",
+                "symbol":"#",
+                "bold":"False",
+                "color":"('black','white')",
+                "penetrable":"False",
+                "pickable":"False"
+                },
+                {
+                "des":"ground",
+                "fdes":"That's a ground, pal",
+                "symbol":".",
+                "bold":"False",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"ground",
+                "fdes":"That's a ground, pal",
+                "symbol":".",
+                "bold":"False",
+                "color":"('yellow','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"ground",
+                "fdes":"That's a ground, pal",
+                "symbol":".",
+                "bold":"False",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"tree",
+                "fdes":"That's a tree",
+                "symbol":"&",
+                "bold":"False",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"tree",
+                "fdes":"That's a thick tree",
+                "symbol":"&",
+                "bold":"True",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"bush",
+                "fdes":"That's a bush",
+                "symbol":"|",
+                "bold":"False",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"False"
+                },
+                {
+                "des":"grass",
+                "fdes":"That's a grass",
+                "symbol":"'",
+                "bold":"False",
+                "color":"('green','black')",
+                "penetrable":"True",
+                "pickable":"True"
+                }
+                
+
+
+
+
+]

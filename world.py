@@ -3,13 +3,14 @@ import numpy as np
 
 from objects import *
 from map import *
+from generators import *
 
 
 class WorldMap(list):
     def __init__(self, size):
         self.size = size
         self.mins = 5
-        self.maxs = 20
+        self.maxs = self.size //10
         self.create_array()
         self.create_quads()
         self.generate_quads()
@@ -61,47 +62,6 @@ class WorldMap(list):
                     x += 1
                 n += 1
         self.n = n
-    def create_quads2(self):
-        verts = stair_ord(self.size-1)
-        mins = self.mins
-        maxs = self.maxs
-        n = 1
-        list1 = []
-        self.quads = []
-        for v in verts:
-            i = v[0]
-            j = v[1]
-            if (i,j) not in list1:
-                #if self.array[i+mins][j] or self.array[i][j+mins] != 0:
-                startx = j
-                starty = i
-                endx = j
-                endy = j
-                dx = r.randint(mins, maxs)
-                dy = r.randint(mins, maxs)
-                x = 1
-                y = 0
-                
-                while i+y<self.size and y<dy:
-                    if (i+y,j) not in list1:
-                        list1.append((i+y,j))
-                    else:
-                        endy = i+y
-                        break
-                    y += 1
-                while j+x<self.size and x<dx:
-                    if all([(I,j+x) not in list1 for I in range(i,i+y)]):
-                        for I in range(i,i+y):
-                            list1.append((I,j+x))
-                            
-                    else:
-                        endx = j+x
-                        break
-                    x += 1
-                
-                self.quads.append((startx,endx,starty,endy))
-                n += 1
-        self.n = n
         
     def generate_quads(self):
         self.quads = []
@@ -136,6 +96,39 @@ class WorldMap(list):
                         self[i][j].append(0)
                     else:
                         self[i][j].append(choice)
+    
+    def fill_quads2(self, N):
+        for quad in self.quads:
+            xs = quad[0]
+            xe = quad[2]
+            ys = quad[1]
+            ye = quad[3]
+
+            val0 = r.randint(1,7)
+            val1 = r.randint(1,7)
+            func = r.choice(('forest','quads','random','empty','circles'))
+            self.quad_filling(xs, ys, xe, ye, val0, val1, func)
+            
+    
+    def quad_filling(self, xs, ys, xe, ye, val0, val1, func):
+        x = xe-xs
+        y = ye-ys
+        gen = Gen(func, x, y, val0, val1)
+        m = 0
+        for i in range(ys,ye):
+            n = 0
+            for j in range(xs,xe):
+                if i == 0 or i == self.size-1 or j == 0 or j == self.size-1:
+                    self[i][j].append(0)
+                else:
+                    try:
+
+                        self[i][j].append(gen.array[i-ys][j-xs])
+                    except IndexError:
+                        pass
+                n+=1
+            m+=1
+    
     
     def fill(self, N):
         for i in range(self.size):
@@ -222,14 +215,19 @@ class World(object):
         #self.cores = [Rock(), Ground(), Ground(('yellow','black')), Ground(('black','black'))]
         #self.plants = [Grass(), Bush(), Tree(), BoldTree()]
         #self.objects = [Stone(), Stick(), Mushroom()]
-        self.objects = [Rock(), Ground(), Ground(('yellow','black')), Ground(('black','black')),\
-                        Grass(), Bush(), Tree(), BoldTree(),\
-                        Stone(), Stick(), Mushroom()]
+        #self.objects = [Rock(), Ground(), Ground(('yellow','black')), Ground(('black','black')),\
+        #                Grass(), Bush(), Tree(), BoldTree(),\
+        #                Stone(), Stick(), Mushroom()]
+        loader = ObjLoader()
+        loader.load_file()
+        self.objects = loader.objects
+        #grn = Elem()
 
     def create_world(self):
         self.world_map = WorldMap(self.size)
         #self.world_map.fill(len(self.objects))
-        self.world_map.fill_quads(len(self.objects))
+        #self.world_map.fill_quads(len(self.objects))
+        self.world_map.fill_quads2(len(self.objects))
         #self.world_map.make_border()
         #self.world_map.make_rnd_trees()
     
